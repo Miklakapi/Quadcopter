@@ -20,4 +20,4 @@ def index():
 
 
 if __name__ == '__main__':
-    app.run('192.168.1.185', debug=True)
+    app.run('192.168.1.3', debug=True)
