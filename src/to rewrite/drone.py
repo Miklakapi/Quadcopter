@@ -1,56 +1,5 @@
-"""drone.py: Drone management module"""
-
-__name__ = "Drone"
-__author__ = "Kacper Miklaszewski"
-__license__ = "MIT"
-__version__ = "1.0.0"
-__status__ = "Production"
-
-import RPi.GPIO as GPIO
-import threading
-from typing import List
-from time import sleep
-import time_
-from drone_action import DroneRotation, DroneSlope
-from accelerometer import Accelerometer
-
-GPIO.setwarnings(False)
-GPIO.setmode(GPIO.BCM)
-
-
-class Drone(threading.Thread):
-    """
-    A class that represents a drone
-
-    This class manages the drone
-
-    :param motor_list: List[RPi.GPIO.PWM] | List of all motors
-    :param power_difference: List[float] | List of motors power differentials
-    :param __main_power: float | Represents motors main power
-    :param led_list: List[RPi.GPIO.PWM] | List of all led
-    :param slope: DroneSlope | Represents the drone slope
-    :param rotation: DroneRotation | Represents the drone rotation
-    :param frequency: time_.LoopRate | Maximum loop frequency
-    :param lock: threading.Lock | Variable for synchronizing threads
-    """
-
-    motor_list: List[GPIO.PWM] = []
-    power_difference: List[float] = []
-    __main_power: float = None
-    led_list: List[GPIO.PWM] = []
-    slope: DroneSlope = None
-    rotation: DroneRotation = None
-    frequency: time_.LoopRate = None
-    lock: threading.Lock = None
-
+class Drone:
     def __init__(self, motor_list: List[int], led_list: List[int], frequency: int) -> None:
-        """
-        This constructor sets GPIO pin value
-        :param motor_list: List[int] | List of all motors
-        :param led_list: List[int] | List of all leds
-        :param frequency: int | Maximum loop frequency
-        :return: None
-        """
         for x in range(4):
             GPIO.setup(motor_list[x], GPIO.OUT)
             GPIO.setup(led_list[x], GPIO.OUT)
@@ -65,14 +14,9 @@ class Drone(threading.Thread):
         self.frequency = time_.LoopRate(frequency)
         self.lock = threading.Lock()
         self.__start_pwm()
-        threading.Thread.__init__(self)
+
 
     def set_motor_power(self, power: float) -> None:
-        """
-        This method sets motors power
-        :param power: float | PWM of motors pins
-        :return: None
-        """
         self.lock.acquire()
         self.__main_power = power
 
@@ -93,12 +37,6 @@ class Drone(threading.Thread):
         self.lock.release()
 
     def set_rotation(self, rotation: DroneRotation, slope: bool) -> None:
-        """
-        This method rotates the drone
-        :param rotation: DroneRotation | Direction of rotation
-        :param slope: bool | Sets whether the function should clear the slope
-        :return: None
-        """
         if slope:
             self.set_slope(DroneSlope.Stay, False)
 
@@ -130,12 +68,6 @@ class Drone(threading.Thread):
             self.rotation = rotation
 
     def set_slope(self, slope: DroneSlope, rotation: bool) -> None:
-        """
-        This method sets the drone slope
-        :param slope: DroneSlope | Represents the drone slope
-        :param rotation: bool | Sets whether the function should clear the rotation
-        :return: None
-        """
         if rotation:
             self.set_rotation(DroneRotation.Stay, False)
 
@@ -190,10 +122,6 @@ class Drone(threading.Thread):
             self.lock.release()
 
     def run(self) -> None:
-        """
-        This method controls the LEDs and the accelerometer
-        :return: None
-        """
         # Led variable
         clock_1 = time_.Clock()
         flag_1 = True
@@ -227,35 +155,8 @@ class Drone(threading.Thread):
             # Frequency
             self.frequency.slow()
 
-    def __start_pwm(self) -> None:
-        """
-        This method turns the motors on and tests them
-        :return: None
-        """
-        # Turn the motors on
-        for x in range(4):
-            self.motor_list[x].start(4)
-            self.led_list[x].start(0)
-        self.__main_power = 4
-        sleep(7)
-        # Test the leds and motors
-        for x in range(4):
-            self.motor_list[x].ChangeDutyCycle(5.7)
-            self.led_list[x].ChangeDutyCycle(100)
-            sleep(2)
-            self.motor_list[x].ChangeDutyCycle(5)
-            self.led_list[x].ChangeDutyCycle(0)
-            sleep(0.3)
-        self.__main_power = 5
-
 #############################
     def __angle(self, x_angle: float, y_angle: float) -> None:
-        """
-        This method sets the drone slope
-        :param x_angle: float | Actual angle
-        :param y_angle: float | Actual angle
-        :return: None
-        """
         regulation: float = 0.05
         self.lock.acquire()
 
@@ -335,16 +236,3 @@ class Drone(threading.Thread):
            print('{}'.format(self.__main_power + self.power_difference[x]))
 
         self.lock.release()
-
-    def __del__(self) -> None:
-        """
-        This deconstructor clears GPIO pin value
-        :return: None
-        """
-        for x in self.motor_list:
-            x.ChangeDustyCycle(5)
-        sleep(0.5)
-        for x in range(4):
-            self.motor_list[x].stop()
-            self.led_list[x].stop()
-        GPIO.cleanup()
