@@ -1,0 +1,67 @@
+$bg-color:#3d3d4a;
+$button-color: #3fb8e8;
+$font-color: #ffffff;
+
+body{
+	background-color: $bg-color;
+	color: $font-color;
+	margin: 0px;
+	height: 100vh;
+}
+
+.container {
+	height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.left_control {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 40%;
+	height: 100%;
+
+	.power {
+		font-size: 2rem;
+		width: 10%;
+	}
+
+	input{
+		$input-color: #e6e6e6;
+		cursor: pointer;
+		appearance: none;
+		border: 1px solid $input-color;
+		background-color: $input-color;
+		border-radius: 20px;
+		transform: rotate(270deg);
+		height: 25px;
+		width: 80%;
+	}
+}
+
+.right_control {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+	width: 40%;
+	height: 70%;
+
+	button {
+		font-size: 3rem;
+		width: 32%;
+		height: 33%;
+		border-radius: 2rem;
+		background-color: $button-color;
+		color: #fff;
+		text-shadow: 0 1px rgba(0,0,0,0.4);
+		font-weight: 700;
+	}
+
+	button:hover {
+		background-color: darken($button-color, 10%);
+		cursor: pointer;
+	}
+}
