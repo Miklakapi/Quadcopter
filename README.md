@@ -6,7 +6,7 @@
 ![version](https://img.shields.io/badge/version-1.0.0-success)
 ![status](https://img.shields.io/badge/status-develop-yellow)
 
-123
+12
 
 ## Table of Contents
 * [General info](#general-info)
@@ -16,7 +16,7 @@
 * [Status](#status)
 
 ## General info
-123 321
+123 
 
 <p align="center" width="100%">
     <img width="33%" src=".gif"> 
