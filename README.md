@@ -6,7 +6,7 @@
 ![version](https://img.shields.io/badge/version-1.0.0-success)
 ![status](https://img.shields.io/badge/status-develop-yellow)
 
-12
+A drone control program written in python and the Flask framework.
 
 ## Table of Contents
 * [General info](#general-info)
@@ -16,10 +16,10 @@
 * [Status](#status)
 
 ## General info
-12
+TODO
 
 <p align="center" width="100%">
-    <img width="33%" src=".gif"> 
+    123
 </p>
 
 ## Technologies
@@ -34,9 +34,13 @@ To run this project, run:
 ```python3 /src/app.py```
 
 ## Features
-* 1
-* 2
-* 3
+* TODO
 
 ## Status
 The project is in the development phase.
+
+
+## TODO
+* Visualization of engine power in the browser for better testing
+* Rewriting and refreshing the code
+* README
