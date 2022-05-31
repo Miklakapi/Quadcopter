@@ -16,7 +16,7 @@
 * [Status](#status)
 
 ## General info
-123 
+12
 
 <p align="center" width="100%">
     <img width="33%" src=".gif"> 
