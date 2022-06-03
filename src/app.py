@@ -21,12 +21,14 @@ def index():
 
 @app.route('/direction/<action>')
 def direction(action):
+    ### TODO ###
     print(action)
     return '', 200
 
 
 @app.route('/power/<strength>')
 def power(strength):
+    ### TODO ###
     print(strength)
     return '', 200
 

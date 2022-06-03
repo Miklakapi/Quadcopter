@@ -11,13 +11,13 @@ class Quadcopter:
     123
     """
 
-    __motor_list = None
+    motor_list = None
     """123"""
 
-    __main_power = None
+    main_power = None
     """123"""
 
-    __led_list = None
+    led_list = None
     """123"""
 
     def __init__(self):
@@ -32,26 +32,26 @@ class Quadcopter:
     def run(self):
         pass
 
-    def __start_pwm(self) -> None:
+    def start_pwm(self) -> None:
         """
         This method turns on and tests the motors and LEDs.
 
         :return: None
         """
-        for x in self.__motor_list:
+        for x in self.motor_list:
             x.start(4)
-        for x in self.__led_list:
+        for x in self.led_list:
             x.start(0)
-        self.__main_power = 4
+        self.main_power = 4
         sleep(5)
-        for x in self.__motor_list:
+        for x in self.motor_list:
             x.ChangeDutyCycle(5.7)
             x.ChangeDutyCycle(100)
             sleep(2)
             x.ChangeDutyCycle(5)
             x.ChangeDutyCycle(0)
             sleep(0.3)
-        self.__main_power = 5
+        self.main_power = 5
 
     def __del__(self) -> None:
         """
@@ -59,10 +59,10 @@ class Quadcopter:
 
         :return: None
         """
-        for x in self.__motor_list:
+        for x in self.motor_list:
             x.ChangeDustyCycle(5)
         sleep(0.5)
         for x in range(4):
-            self.__motor_list[x].stop()
-            self.__led_list[x].stop()
+            self.motor_list[x].stop()
+            self.led_list[x].stop()
         GPIO.cleanup()
