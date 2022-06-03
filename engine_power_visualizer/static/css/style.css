@@ -7,4 +7,33 @@ body {
 .container {
   height: 100vh;
   display: flex;
-  align-items: center; }
+  align-items: center;
+  justify-content: center; }
+  .container .box {
+    width: 550px;
+    height: 550px;
+    background-color: #31313c;
+    position: relative;
+    border-radius: 2rem; }
+    .container .box .square {
+      width: 30%;
+      height: 30%;
+      background-color: #0f7da8;
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 100%;
+      font-size: 2rem; }
+      .container .box .square:nth-child(1) {
+        top: 0;
+        left: 0; }
+      .container .box .square:nth-child(2) {
+        top: 0;
+        right: 0; }
+      .container .box .square:nth-child(3) {
+        bottom: 0;
+        left: 0; }
+      .container .box .square:nth-child(4) {
+        bottom: 0;
+        right: 0; }

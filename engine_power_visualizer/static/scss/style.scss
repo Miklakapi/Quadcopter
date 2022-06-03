@@ -1,5 +1,5 @@
 $bg-color:#3d3d4a;
-$button-color: #3fb8e8;
+$engine-color: #0f7da8;
 $font-color: #ffffff;
 
 body{
@@ -13,4 +13,46 @@ body{
 	height: 100vh;
 	display: flex;
 	align-items: center;
+    justify-content: center;
+
+
+    .box {
+        width: 550px;
+        height: 550px;
+        background-color: darken($color: $bg-color, $amount: 5%);
+        position: relative;
+        border-radius: 2rem;
+
+        .square {
+            width: 30%;
+            height: 30%;
+            background-color: $engine-color;
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 100%;
+            font-size: 2rem;
+
+            &:nth-child(1) {
+                top: 0;
+                left: 0;
+            }
+
+            &:nth-child(2) {
+                top: 0;
+                right: 0;
+            }
+
+            &:nth-child(3) {
+                bottom: 0;
+                left: 0;
+            }
+
+            &:nth-child(4) {
+                bottom: 0;
+                right: 0;
+            }
+        }
+    }
 }
