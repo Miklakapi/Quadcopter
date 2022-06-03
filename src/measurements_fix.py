@@ -4,15 +4,15 @@
 
 from typing import TypeVar
 
-MeasurementsFixerObject = TypeVar('MeasurementsFixerObject', bound='FileReader')
+MeasurementsFixerObject = TypeVar('MeasurementsFixerObject', bound='MeasurementsFixer')
 
 
 class MeasurementsFixer:
 
-    __measurements_array: list = None
+    measurements_array: list = None
     """Stores the history of measurements"""
 
-    __round_position: int = None
+    round_position: int = None
     """Holds the position to which the class will round numbers"""
 
     def __init__(self, round_position: int = 0) -> None:
@@ -22,7 +22,7 @@ class MeasurementsFixer:
         :param round_position: int | Position to which the class will round numbers
         :return: None
         """
-        self.__measurements_array = [[0, 0], [0, 0], [0, 0]]
+        self.measurements_array = [[0, 0], [0, 0], [0, 0]]
         self.set_round(round_position)
 
     def set_round(self, round_position: int) -> MeasurementsFixerObject:
@@ -34,7 +34,7 @@ class MeasurementsFixer:
         """
         if round_position < -1:
             raise ValueError('Wrong round_position. ' + str(round_position) + ' should be greater than -1.')
-        self.__round_position = round_position
+        self.round_position = round_position
         return self
 
     def add_measurement(self, measurement: list) -> MeasurementsFixerObject:
@@ -44,8 +44,8 @@ class MeasurementsFixer:
         :param measurement: list | Data from accelerometer
         :return: self
         """
-        self.__measurements_array.pop(0)
-        self.__measurements_array.append(measurement)
+        self.measurements_array.pop(0)
+        self.measurements_array.append(measurement)
         return self
 
     def get_all_measurements(self) -> list:
@@ -54,7 +54,7 @@ class MeasurementsFixer:
 
         :return: list | Copy of the measurement history
         """
-        return self.__measurements_array.copy()
+        return self.measurements_array.copy()
 
     def get_fixed_measurement(self) -> list:
         """
@@ -65,14 +65,14 @@ class MeasurementsFixer:
         return [
             round((
                     (
-                            self.__measurements_array[0][0] +
-                            self.__measurements_array[1][0] +
-                            self.__measurements_array[2][0]
-                    ) / 3), self.__round_position),
+                            self.measurements_array[0][0] +
+                            self.measurements_array[1][0] +
+                            self.measurements_array[2][0]
+                    ) / 3), self.round_position),
             round((
                     (
-                            self.__measurements_array[0][1] +
-                            self.__measurements_array[1][1] +
-                            self.__measurements_array[2][1]
-                    ) / 3), self.__round_position)
+                            self.measurements_array[0][1] +
+                            self.measurements_array[1][1] +
+                            self.measurements_array[2][1]
+                    ) / 3), self.round_position)
         ]

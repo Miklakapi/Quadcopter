@@ -1,8 +1,25 @@
 {
-    "dependencies": {
-        "node-sass":"^7.0.1"
-    },
-    "scripts": {
-        "scss": "node-sass ./src/static/scss/style.scss ./src/static/css/style.css -w"
-      }
+  "dependencies": {
+    "node-sass": "^7.0.1"
+  },
+  "scripts": {
+    "scss": "node-sass ./src/static/scss/style.scss ./src/static/css/style.css -w"
+  },
+  "name": "quadcopter",
+  "version": "1.0.0",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Miklakapi/Quadcopter.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Miklakapi/Quadcopter/issues"
+  },
+  "homepage": "https://github.com/Miklakapi/Quadcopter#readme"
 }

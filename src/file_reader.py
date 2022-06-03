@@ -14,7 +14,7 @@ class FileReader:
     This class holds the path to all the given files and their aliases, and reads those files.
     """
 
-    __files: dict = None
+    files: dict = None
     """Stores path to all files and aliases to their."""
 
     def __init__(self, associative_name: str = 'pins', path_to_file: str = '../data/pins.json') -> None:
@@ -24,7 +24,7 @@ class FileReader:
         :param associative_name: str | Key to FileReader dictionary
         :param path_to_file: str | Value to FileReader dictionary
         """
-        self.__files = {}
+        self.files = {}
         self.add_file(associative_name, path_to_file)
 
     def add_file(self, associative_name: str, path_to_file: str) -> FileReaderObject:
@@ -37,7 +37,7 @@ class FileReader:
         """
         if not os.path.isfile(path_to_file):
             raise Exception('File "' + path_to_file + '" not found.')
-        self.__files[associative_name] = path_to_file
+        self.files[associative_name] = path_to_file
         return self
 
     def del_file(self, associative_name: str) -> FileReaderObject:
@@ -47,7 +47,7 @@ class FileReader:
         :param associative_name: str | Key to FileReader dictionary
         :return: self
         """
-        del self.__files[associative_name]
+        del self.files[associative_name]
         return self
 
     def get_files_dictionary(self) -> dict:
@@ -56,7 +56,7 @@ class FileReader:
 
         :return: dict | File dictionary
         """
-        return self.__files.copy()
+        return self.files.copy()
 
     def show_files(self) -> FileReaderObject:
         """
@@ -64,7 +64,7 @@ class FileReader:
 
         :return: self
         """
-        for key, value in self.__files.items():
+        for key, value in self.files.items():
             print(key + ' : ' + value)
         return self
 
@@ -75,7 +75,7 @@ class FileReader:
         :param associative_name: str | Key to FileReader dictionary
         :return: dict | All data from file
         """
-        file = open(self.__files[associative_name], 'r')
+        file = open(self.files[associative_name], 'r')
         data = json.load(file)
         file.close()
         return data

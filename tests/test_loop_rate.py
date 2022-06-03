@@ -3,8 +3,7 @@
 from unittest import TestCase
 
 import import_from_root
-from src.loop_rate import LoopRate
-from src.clock import Clock
+from src.timers import LoopRate, Clock
 
 
 class TestLoopRate(TestCase):

@@ -3,7 +3,7 @@
 from unittest import TestCase
 
 import import_from_root
-from src.time_converter import TimeConverter, Unit
+from src.timers import TimeConverter, Unit
 
 
 class TestTimeConverter(TestCase):

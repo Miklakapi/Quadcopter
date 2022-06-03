@@ -4,7 +4,7 @@ from unittest import TestCase
 from time import sleep
 
 import import_from_root
-from src.clock import Clock
+from src.timers import Clock
 
 
 class TestClock(TestCase):
