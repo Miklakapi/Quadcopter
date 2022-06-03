@@ -14,8 +14,11 @@ body {
     height: 550px;
     background-color: #31313c;
     position: relative;
-    border-radius: 2rem; }
-    .container .box .square {
+    border-radius: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center; }
+    .container .box .engine {
       width: 30%;
       height: 30%;
       background-color: #0f7da8;
@@ -25,15 +28,20 @@ body {
       justify-content: center;
       border-radius: 100%;
       font-size: 2rem; }
-      .container .box .square:nth-child(1) {
+      .container .box .engine:nth-child(1) {
         top: 0;
         left: 0; }
-      .container .box .square:nth-child(2) {
+      .container .box .engine:nth-child(2) {
         top: 0;
         right: 0; }
-      .container .box .square:nth-child(3) {
+      .container .box .engine:nth-child(3) {
         bottom: 0;
         left: 0; }
-      .container .box .square:nth-child(4) {
+      .container .box .engine:nth-child(4) {
         bottom: 0;
         right: 0; }
+    .container .box .error {
+      color: #ac1818;
+      font-size: 2.5rem;
+      max-width: 75%;
+      text-align: center; }

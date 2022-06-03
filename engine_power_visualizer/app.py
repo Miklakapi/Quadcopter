@@ -21,7 +21,7 @@ def index():
 
 @app.route('/get-data')
 def get_data():
-    return {'1': 10, '2': 10, '3': 10, '4': 10}
+    return {'1': 10, '2': 5, '3': 2, '4': 1}
 
 
 if __name__ == '__main__':

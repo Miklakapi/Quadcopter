@@ -22,8 +22,11 @@ body{
         background-color: darken($color: $bg-color, $amount: 5%);
         position: relative;
         border-radius: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
-        .square {
+        .engine {
             width: 30%;
             height: 30%;
             background-color: $engine-color;
@@ -53,6 +56,13 @@ body{
                 bottom: 0;
                 right: 0;
             }
+        }
+
+        .error {
+            color: rgb(172, 24, 24);
+            font-size: 2.5rem;
+            max-width: 75%;
+            text-align: center;
         }
     }
 }
