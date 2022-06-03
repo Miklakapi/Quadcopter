@@ -3,7 +3,8 @@
     "node-sass": "^7.0.1"
   },
   "scripts": {
-    "scss": "node-sass ./src/static/scss/style.scss ./src/static/css/style.css -w"
+    "scss": "node-sass ./src/static/scss/style.scss ./src/static/css/style.css -w",
+    "scss-visualizer": "node-sass ./engine_power_visualizer/static/scss/style.scss ./engine_power_visualizer/static/css/style.css -w"
   },
   "name": "quadcopter",
   "version": "1.0.0",
