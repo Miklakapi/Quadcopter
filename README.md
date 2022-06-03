@@ -41,6 +41,7 @@ The project is in the development phase.
 
 
 ## TODO
-* Visualization of engine power in the browser for better testing
+* Visualization of engine power in the browser for better testing - server side
 * Rewriting and refreshing the code
+* Dron code
 * README
