@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """Adds a path for importing between directories to work"""
 
 import sys
