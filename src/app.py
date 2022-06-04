@@ -1,10 +1,14 @@
 """This module manages the web server."""
 
 import os
-from flask import Flask, send_from_directory, render_template, request
+from flask import Flask, send_from_directory, render_template
+from flask_cors import CORS
+
+from quadcopter import Quadcopter
 
 
 app = Flask(__name__)
+CORS(app)
 
 
 @app.route('/favicon.ico')
