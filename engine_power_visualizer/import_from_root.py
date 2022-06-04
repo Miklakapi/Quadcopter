@@ -6,3 +6,4 @@ from pathlib import Path
 here = Path(__file__).resolve()
 
 sys.path.insert(1, str(here.parent.parent.absolute()))
+sys.path.insert(1, str(here.parent.parent.absolute()) + '/src')
