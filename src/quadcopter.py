@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """Module to control quadcopter"""
 
 from xmlrpc.client import Boolean

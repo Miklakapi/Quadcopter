@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """This module handles the communication over I2C between a Raspberry Pi and a MPU-6050 Accelerometer."""
 
 import smbus

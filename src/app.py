@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """This module manages the web server."""
 
 import os

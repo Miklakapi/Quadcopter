@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """This module contains time functions."""
 
 from typing import TypeVar

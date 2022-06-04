@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """This module stores 3 measurements from the accelerometer and calculates the average and rounds it."""
 
 from typing import TypeVar
