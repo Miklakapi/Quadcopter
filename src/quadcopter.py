@@ -1,7 +1,5 @@
 """Module to control quadcopter"""
 
-from argparse import Action
-from tkinter import LEFT
 import RPi.GPIO as GPIO
 from time import sleep
 from enum import Enum
@@ -122,17 +120,20 @@ class Quadcopter:
         :param action: Action | Drone action
         :return: None
         """
-        self.action = action
-        self.x_angle_range = [-1, 1]
-        self.y_angle_range = [-1, 1]
+        x_angle_range = [-1, 1]
+        y_angle_range = [-1, 1]
         if action == self.Action.FORWARD:
-            self.x_angle_range = [18, 22]
+            x_angle_range = [18, 22]
         elif action == self.Action.BACKWARD:
-            self.x_angle_range = [-18, -22]
+            x_angle_range = [-18, -22]
         elif action == self.Action.LEFT:
-            self.y_angle_range = [-18, -22]
+            y_angle_range = [-18, -22]
         elif action == self.Action.RIGHT:
-            self.y_angle_range = [18, 22]
+            y_angle_range = [18, 22]
+
+        self.action = action
+        self.x_angle_range = x_angle_range
+        self.y_angle_range = y_angle_range
 
     def run(self) -> None:
         """
@@ -205,6 +206,19 @@ class Quadcopter:
         led['active'] = not led['active']
         GPIO.setup(led['pin'], led['active'])
         return led['active']
+
+    def get_powers(self) -> dict:
+        """
+        This method returns the power of the motors to generate a visualization for testing purposes.
+
+        :return: dict | Dictionary of motors power
+        """
+        powers = {}
+        for loop_index, x in enumerate(self.motor_dict.values()):
+            powers.update({
+                loop_index: {self.main_power + x['extra_power']}
+            })
+        return powers
 
     def __del__(self) -> None:
         """
