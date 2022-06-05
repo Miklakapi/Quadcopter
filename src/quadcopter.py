@@ -9,15 +9,15 @@ from accelerometer import Accelerometer
 from measurements_fix import MeasurementsFixer
 from timers import Clock
 
-#       ┌────┐   ┌────┐
+#       ┌────┐y +┌────┐
 #       │ 01 │   │ 02 │
 #       └────┘   └────┘
 #             \ /
-#              X
+#       x+     X     x-
 #             / \
 #       ┌────┐   ┌────┐
 #       │ 03 │   │ 04 │
-#       └────┘   └────┘
+#       └────┘y -└────┘
 
 
 class Quadcopter:
@@ -220,7 +220,7 @@ class Quadcopter:
         powers = {}
         for loop_index, x in enumerate(self.motor_dict.values()):
             powers.update({
-                loop_index: {self.main_power + x['extra_power']}
+                loop_index: self.main_power + x['extra_power']
             })
         return powers
 
