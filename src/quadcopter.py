@@ -71,6 +71,9 @@ class Quadcopter:
         motors = reader.get_data('motors')
         leds = reader.get_data('leds')
 
+        GPIO.setwarnings(False)
+        GPIO.setmode(GPIO.BCM)
+
         for x in motors:
             GPIO.setup(motors[x], GPIO.OUT, initial=GPIO.LOW)
             self.motor_dict.update({
@@ -150,6 +153,7 @@ class Quadcopter:
             self.measure_fixer.add_measurement(self.accelerometer.run())
             sleep(0.06)
         angle = self.measure_fixer.get_fixed_measurement()
+        print(angle)
 
     def start_pwm(self) -> None:
         """
@@ -185,7 +189,7 @@ class Quadcopter:
         self.set_led(self.led_dict['frontLeft'], True)
         self.set_led(self.led_dict['backRigth'], True)
 
-    def set_led(led: dict, active: bool) -> None:
+    def set_led(self, led: dict, active: bool) -> None:
         """
         This method set led state
 
@@ -196,7 +200,7 @@ class Quadcopter:
         GPIO.setup(led['pin'], active)
         led['active'] = active
 
-    def switch_led(led: dict) -> bool:
+    def switch_led(self, led: dict) -> bool:
         """
         This method changes the state of the led.
         
@@ -227,10 +231,10 @@ class Quadcopter:
         :return: None
         """
         for x in self.motor_dict.values():
-            x['gpio'].ChangeDustyCycle(5)
+            x['gpio'].ChangeDutyCycle(5)
         sleep(0.5)
         for x in self.motor_dict.values():
-            x.stop()
+            x['gpio'].stop()
         for x in self.led_dict.values():
             GPIO.setup(x['pin'], 0)
         GPIO.cleanup()
