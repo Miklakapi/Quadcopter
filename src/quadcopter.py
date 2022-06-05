@@ -128,9 +128,9 @@ class Quadcopter:
         if action == self.Action.FORWARD:
             x_angle_range = [18, 22]
         elif action == self.Action.BACKWARD:
-            x_angle_range = [-18, -22]
+            x_angle_range = [-22, -18]
         elif action == self.Action.LEFT:
-            y_angle_range = [-18, -22]
+            y_angle_range = [-22, -18]
         elif action == self.Action.RIGHT:
             y_angle_range = [18, 22]
 
@@ -153,7 +153,25 @@ class Quadcopter:
             self.measure_fixer.add_measurement(self.accelerometer.run())
             sleep(0.06)
         angle = self.measure_fixer.get_fixed_measurement()
+        ### TEST ###
         print(angle)
+
+        for x in self.motor_dict.values():
+            x['extra_power'] = 0
+
+        if angle[0] < self.x_angle_range[0]:
+            self.motor_dict['frontLeft']['extra_power'] += 2.5
+            self.motor_dict['backLeft']['extra_power'] += 2.5
+        elif angle[0] > self.x_angle_range[1]:
+            self.motor_dict['frontRight']['extra_power'] += 2.5
+            self.motor_dict['backRight']['extra_power'] += 2.5
+
+        if angle[1] < self.y_angle_range[0]:
+            self.motor_dict['frontRight']['extra_power'] += 2.5
+            self.motor_dict['frontLeft']['extra_power'] += 2.5
+        elif angle[1] > self.y_angle_range[1]:
+            self.motor_dict['backRight']['extra_power'] += 2.5
+            self.motor_dict['backLeft']['extra_power'] += 2.5
 
     def start_pwm(self) -> None:
         """
