@@ -5,7 +5,7 @@ $(document).ready(function () {
 });
 
 function initPower() {
-    fetch('http://192.168.1.6:5000/get-data')
+    fetch('http://192.168.1.185:5000/get-data')
     .then(async response => {
 
         if (!response.ok) {
@@ -24,8 +24,8 @@ function initPower() {
 }
 
 function putData(data) {
-    $('.engine:nth-child(1)').html(data['1']);
-    $('.engine:nth-child(2)').html(data['2']);
-    $('.engine:nth-child(3)').html(data['3']);
-    $('.engine:nth-child(4)').html(data['4']);
+    $('.engine:nth-child(1)').html(data['0']);
+    $('.engine:nth-child(2)').html(data['1']);
+    $('.engine:nth-child(3)').html(data['2']);
+    $('.engine:nth-child(4)').html(data['3']);
 }
