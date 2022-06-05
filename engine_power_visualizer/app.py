@@ -12,17 +12,18 @@ from src.quadcopter import Quadcopter
 
 
 data = multiprocessing.Manager().list()
+data.append(0)
 app = Flask(__name__)
 CORS(app)
 drone = Quadcopter()
 
 
-def run_quadcopter(data):
+def run_quadcopter(variable):
     try:
         while True:
             drone.run()
-            data = drone.get_powers()
-            sleep(0.05)
+            variable[0] = drone.get_powers()
+            sleep(0.1)
     except KeyboardInterrupt:
         return
 
@@ -39,7 +40,7 @@ def index():
 
 @app.route('/get-data')
 def get_data():
-    return drone.get_powers()
+    return data[0]
 
 
 if __name__ == '__main__':
