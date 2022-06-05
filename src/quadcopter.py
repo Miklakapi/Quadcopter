@@ -187,7 +187,7 @@ class Quadcopter:
                 self.set_led(x, False)
 
         self.set_led(self.led_dict['frontLeft'], True)
-        self.set_led(self.led_dict['backRigth'], True)
+        self.set_led(self.led_dict['backRight'], True)
 
     def set_led(self, led: dict, active: bool) -> None:
         """
