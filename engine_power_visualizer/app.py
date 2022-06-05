@@ -1,12 +1,30 @@
 """This module manages the web visualizer."""
 
 import os
+import logging
+from time import sleep
 from flask import Flask, send_from_directory, render_template
+import multiprocessing
+from flask_cors import CORS
 
 import import_from_root
+from src.quadcopter import Quadcopter
 
 
+data = multiprocessing.Manager().list()
 app = Flask(__name__)
+CORS(app)
+drone = Quadcopter()
+
+
+def run_quadcopter(data):
+    try:
+        while True:
+            drone.run()
+            data = drone.get_powers()
+            sleep(0.05)
+    except KeyboardInterrupt:
+        return
 
 
 @app.route('/favicon.ico')
@@ -21,8 +39,15 @@ def index():
 
 @app.route('/get-data')
 def get_data():
-    return {'1': 10, '2': 5, '3': 2, '4': 1}
+    return drone.get_powers()
 
 
 if __name__ == '__main__':
-    app.run('0.0.0.0', debug=True)
+    proccess = multiprocessing.Process(target=run_quadcopter, args=(data,))
+    # logging.getLogger('werkzeug').disabled = True
+    try:
+        proccess.start()
+        app.run('0.0.0.0', debug=True)
+    except KeyboardInterrupt:
+        proccess.terminate()
+        proccess.join()
