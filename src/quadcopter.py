@@ -58,8 +58,20 @@ class Quadcopter:
     x_angle_range: list = []
     """X axis range"""
 
+    x_delta_power: float = 0
+    """The difference in engine power on the x axis"""
+
     y_angle_range: list = []
     """Y axis range"""
+
+    y_delta_power: float = 0
+    """The difference in engine power on the y axis"""
+
+    CONST_MAX_POWER: float = 10.0
+    """Max motor power"""
+
+    CONST_MIN_POWER: float = 5.0
+    """Min motor power"""
 
     def __init__(self) -> None:
         """
@@ -116,6 +128,15 @@ class Quadcopter:
         for x in self.motor_dict.values():
             x['gpio'].ChangeDutyCycle(main_power + x['extra_power'])
 
+    def set_powers(self) -> None:
+        """
+        This method sets the power on each individual motor.
+
+        :return: None
+        """
+        for x in self.motor_dict.values():
+            x['gpio'].ChangeDutyCycle(self.main_power + x['extra_power'])
+
     def set_action(self, action: Action) -> None:
         """
         This method sets the activity of the quadcopter and changes the range of angles.
@@ -153,25 +174,35 @@ class Quadcopter:
             self.measure_fixer.add_measurement(self.accelerometer.run())
             sleep(0.06)
         angle = self.measure_fixer.get_fixed_measurement()
-        ### TEST ###
-        print(angle)
-
-        for x in self.motor_dict.values():
-            x['extra_power'] = 0
 
         if angle[0] < self.x_angle_range[0]:
-            self.motor_dict['frontLeft']['extra_power'] += 2.5
-            self.motor_dict['backLeft']['extra_power'] += 2.5
+            self.x_delta_power += 0.08
+            # self.motor_dict['frontLeft'] ++
+            # self.motor_dict['backLeft'] ++
         elif angle[0] > self.x_angle_range[1]:
-            self.motor_dict['frontRight']['extra_power'] += 2.5
-            self.motor_dict['backRight']['extra_power'] += 2.5
+            self.x_delta_power -= 0.08
+            # self.motor_dict['frontRight'] ++
+            # self.motor_dict['backRight'] ++
 
         if angle[1] < self.y_angle_range[0]:
-            self.motor_dict['frontRight']['extra_power'] += 2.5
-            self.motor_dict['frontLeft']['extra_power'] += 2.5
+            self.y_delta_power += 0.08
+            # self.motor_dict['frontRight'] ++
+            # self.motor_dict['frontLeft'] ++
         elif angle[1] > self.y_angle_range[1]:
-            self.motor_dict['backRight']['extra_power'] += 2.5
-            self.motor_dict['backLeft']['extra_power'] += 2.5
+            self.y_delta_power -= 0.08
+            # self.motor_dict['backRight'] ++
+            # self.motor_dict['backLeft'] ++
+        
+        self.regulate_power()
+        self.set_powers()
+
+    def regulate_power(self) -> None:
+        """
+        This method regulates the power of the motors based on the delta variable.
+
+        :return: None
+        """
+        pass
 
     def start_pwm(self) -> None:
         """
