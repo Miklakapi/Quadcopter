@@ -223,11 +223,12 @@ class Quadcopter:
         self.motor_dict['backRight']['extra_power'] = power_per_engine_right
 
         # TODO
-        power_per_engine = self.y_delta_power / 2
-        self.motor_dict['frontRight']['extra_power'] += power_per_engine
-        self.motor_dict['frontLeft']['extra_power'] += power_per_engine
-        self.motor_dict['backRight']['extra_power'] -= power_per_engine
-        self.motor_dict['backLeft']['extra_power'] -= power_per_engine
+        power_per_engine_front = self.y_delta_power / 2
+        power_per_engine_back = -power_per_engine_front
+        self.motor_dict['frontRight']['extra_power'] += power_per_engine_front
+        self.motor_dict['frontLeft']['extra_power'] += power_per_engine_front
+        self.motor_dict['backRight']['extra_power'] -= power_per_engine_back
+        self.motor_dict['backLeft']['extra_power'] -= power_per_engine_back
 
     def get_calculated_power(self, motor_name) -> float:
         """
