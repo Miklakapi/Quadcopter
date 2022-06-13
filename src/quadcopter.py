@@ -184,24 +184,16 @@ class Quadcopter:
         if angle[0] < self.x_angle_range[0]:
             if self.x_delta_power <= self.CONST_MAX_DELTA - self.CONST_POWER_JUMP:
                 self.x_delta_power += self.CONST_POWER_JUMP
-            # self.motor_dict['frontLeft'] ++
-            # self.motor_dict['backLeft'] ++
         elif angle[0] > self.x_angle_range[1]:
             if self.x_delta_power >= -self.CONST_MAX_DELTA + self.CONST_POWER_JUMP:
                 self.x_delta_power -= 0.08
-            # self.motor_dict['frontRight'] ++
-            # self.motor_dict['backRight'] ++
 
         if angle[1] < self.y_angle_range[0]:
             if self.y_delta_power <= self.CONST_MAX_DELTA - self.CONST_POWER_JUMP:
                 self.y_delta_power += self.CONST_POWER_JUMP
-            # self.motor_dict['frontRight'] ++
-            # self.motor_dict['frontLeft'] ++
         elif angle[1] > self.y_angle_range[1]:
             if self.y_delta_power >= -self.CONST_MAX_DELTA + self.CONST_POWER_JUMP:
                 self.y_delta_power -= self.CONST_POWER_JUMP
-            # self.motor_dict['backRight'] ++
-            # self.motor_dict['backLeft'] ++
         
         self.distribute_power()
         self.set_powers()
@@ -212,7 +204,17 @@ class Quadcopter:
 
         :return: None
         """
-        
+        power_per_engine = self.x_delta_power / 2
+        self.motor_dict['frontLeft']['extra_power'] += power_per_engine
+        self.motor_dict['backLeft']['extra_power'] += power_per_engine
+        self.motor_dict['frontRight']['extra_power'] -= power_per_engine
+        self.motor_dict['backRight']['extra_power'] -= power_per_engine
+
+        power_per_engine = self.y_delta_power / 2
+        self.motor_dict['frontRight']['extra_power'] += power_per_engine
+        self.motor_dict['frontLeft']['extra_power'] += power_per_engine
+        self.motor_dict['backRight']['extra_power'] -= power_per_engine
+        self.motor_dict['backLeft']['extra_power'] -= power_per_engine
 
     def start_pwm(self) -> None:
         """
