@@ -204,17 +204,38 @@ class Quadcopter:
 
         :return: None
         """
-        power_per_engine = self.x_delta_power / 2
-        self.motor_dict['frontLeft']['extra_power'] += power_per_engine
-        self.motor_dict['backLeft']['extra_power'] += power_per_engine
-        self.motor_dict['frontRight']['extra_power'] -= power_per_engine
-        self.motor_dict['backRight']['extra_power'] -= power_per_engine
+        power_per_engine_left = self.x_delta_power / 2
+        power_per_engine_right = -power_per_engine_left
 
+        if self.main_power + power_per_engine_left > self.CONST_MAX_POWER:
+            power_per_engine_left = self.CONST_MAX_POWER - self.main_power
+        elif self.main_power + power_per_engine_left < self.CONST_MIN_POWER:
+            power_per_engine_left = self.CONST_MIN_POWER - self.main_power
+        
+        if self.main_power + power_per_engine_right > self.CONST_MAX_POWER:
+            power_per_engine_right = self.CONST_MAX_POWER - self.main_power
+        elif self.main_power + power_per_engine_right < self.CONST_MIN_POWER:
+            power_per_engine_right = self.CONST_MIN_POWER - self.main_power
+
+        self.motor_dict['frontLeft']['extra_power'] = power_per_engine_left
+        self.motor_dict['backLeft']['extra_power'] = power_per_engine_left
+        self.motor_dict['frontRight']['extra_power'] = power_per_engine_right
+        self.motor_dict['backRight']['extra_power'] = power_per_engine_right
+
+        # TODO
         power_per_engine = self.y_delta_power / 2
         self.motor_dict['frontRight']['extra_power'] += power_per_engine
         self.motor_dict['frontLeft']['extra_power'] += power_per_engine
         self.motor_dict['backRight']['extra_power'] -= power_per_engine
         self.motor_dict['backLeft']['extra_power'] -= power_per_engine
+
+    def get_calculated_power(self, motor_name) -> float:
+        """
+        This method calculates the motor power and returns it.
+        
+        :return: float | Calculated_power
+        """
+        return self.main_power + self.motor_dict[motor_name]['extra_power']
 
     def start_pwm(self) -> None:
         """
