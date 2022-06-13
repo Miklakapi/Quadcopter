@@ -67,6 +67,12 @@ class Quadcopter:
     y_delta_power: float = 0
     """The difference in engine power on the y axis"""
 
+    CONST_POWER_JUMP: float = 0.08
+    """The value of the engine power jump if the flight is unstable"""
+
+    CONST_MAX_DELTA: float = 2
+    """Maximum delta of power difference"""
+
     CONST_MAX_POWER: float = 10.0
     """Max motor power"""
 
@@ -176,33 +182,37 @@ class Quadcopter:
         angle = self.measure_fixer.get_fixed_measurement()
 
         if angle[0] < self.x_angle_range[0]:
-            self.x_delta_power += 0.08
+            if self.x_delta_power <= self.CONST_MAX_DELTA - self.CONST_POWER_JUMP:
+                self.x_delta_power += self.CONST_POWER_JUMP
             # self.motor_dict['frontLeft'] ++
             # self.motor_dict['backLeft'] ++
         elif angle[0] > self.x_angle_range[1]:
-            self.x_delta_power -= 0.08
+            if self.x_delta_power >= -self.CONST_MAX_DELTA + self.CONST_POWER_JUMP:
+                self.x_delta_power -= 0.08
             # self.motor_dict['frontRight'] ++
             # self.motor_dict['backRight'] ++
 
         if angle[1] < self.y_angle_range[0]:
-            self.y_delta_power += 0.08
+            if self.y_delta_power <= self.CONST_MAX_DELTA - self.CONST_POWER_JUMP:
+                self.y_delta_power += self.CONST_POWER_JUMP
             # self.motor_dict['frontRight'] ++
             # self.motor_dict['frontLeft'] ++
         elif angle[1] > self.y_angle_range[1]:
-            self.y_delta_power -= 0.08
+            if self.y_delta_power >= -self.CONST_MAX_DELTA + self.CONST_POWER_JUMP:
+                self.y_delta_power -= self.CONST_POWER_JUMP
             # self.motor_dict['backRight'] ++
             # self.motor_dict['backLeft'] ++
         
-        self.regulate_power()
+        self.distribute_power()
         self.set_powers()
 
-    def regulate_power(self) -> None:
+    def distribute_power(self) -> None:
         """
-        This method regulates the power of the motors based on the delta variable.
+        This method distributes power between the motors based on a variable delta.
 
         :return: None
         """
-        pass
+        
 
     def start_pwm(self) -> None:
         """
