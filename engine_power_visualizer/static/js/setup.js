@@ -24,8 +24,8 @@ function initPower() {
 }
 
 function putData(data) {
-    $('.engine:nth-child(1)').html(data['0']);
-    $('.engine:nth-child(2)').html(data['1']);
-    $('.engine:nth-child(3)').html(data['2']);
-    $('.engine:nth-child(4)').html(data['3']);
+    $('.engine:nth-child(1)').html(parseFloat(data['0']).toFixed(2));
+    $('.engine:nth-child(2)').html(parseFloat(data['1']).toFixed(2));
+    $('.engine:nth-child(3)').html(parseFloat(data['2']).toFixed(2));
+    $('.engine:nth-child(4)').html(parseFloat(data['3']).toFixed(2));
 }
