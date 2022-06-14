@@ -227,22 +227,24 @@ class Quadcopter:
         self.motor_dict['frontRight']['extra_power'] = power_per_engine_right
         self.motor_dict['backRight']['extra_power'] = power_per_engine_right
 
-        # TODO
-        # power_per_engine_front = self.y_delta_power / 2
-        # power_per_engine_back = -power_per_engine_front
+        power_per_engine_front = self.y_delta_power / 2
+        power_per_engine_back = -power_per_engine_front
 
+        # TODO
+        if self.y_delta_power > 0:
+            if power_per_engine_left > power_per_engine_right:
+                pass
+            else:
+                pass
+        else:
+            if power_per_engine_left > power_per_engine_right:
+                pass
+            else:
+                pass
         # self.motor_dict['frontRight']['extra_power'] += power_per_engine_front
         # self.motor_dict['frontLeft']['extra_power'] += power_per_engine_front
         # self.motor_dict['backRight']['extra_power'] += power_per_engine_back
         # self.motor_dict['backLeft']['extra_power'] += power_per_engine_back
-
-    def get_calculated_power(self, motor_name) -> float:
-        """
-        This method calculates the motor power and returns it.
-        
-        :return: float | Calculated_power
-        """
-        return self.main_power + self.motor_dict[motor_name]['extra_power']
 
     def start_pwm(self) -> None:
         """
