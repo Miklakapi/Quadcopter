@@ -9,6 +9,24 @@ body {
   display: flex;
   align-items: center;
   justify-content: center; }
+  .container .control {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 135px;
+    height: 550px; }
+    .container .control input {
+      cursor: pointer;
+      appearance: slider-vertical;
+      border: 1px solid #e6e6e6;
+      background-color: #e6e6e6;
+      border-radius: 20px;
+      height: 500px;
+      width: 20px; }
+    .container .control .power {
+      float: right;
+      font-size: 2rem;
+      margin-left: auto; }
   .container .box {
     width: 550px;
     height: 550px;

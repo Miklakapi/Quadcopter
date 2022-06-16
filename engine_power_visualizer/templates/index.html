@@ -10,12 +10,16 @@
 	<script src="{{ url_for('static', filename='js/setup.js') }}"></script>
 </head>
 <body>
-    <div class="container">
+	<div class="container">
+		<div class="control">
+			<input type="range" orient="vertical" min="0" max="100" value="0" class="slider" step="0.08">
+			<div class="power">0 %</div>
+		</div>
 		<div class="box">
-			<div class="engine">0%</div>
-			<div class="engine">0%</div>
-			<div class="engine">0%</div>
-			<div class="engine">0%</div>
+			<div class="engine">0</div>
+			<div class="engine">0</div>
+			<div class="engine">0</div>
+			<div class="engine">0</div>
 			<div class="error"></div>
 		</div>
 	</div>
