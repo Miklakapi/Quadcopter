@@ -3,7 +3,7 @@
 import os
 import logging
 from time import sleep
-from flask import Flask, send_from_directory, render_template
+from flask import Flask, send_from_directory, render_template, Response
 import multiprocessing
 from flask_cors import CORS
 
@@ -41,6 +41,11 @@ def index():
 @app.route('/get-data')
 def get_data():
     return data[0]
+
+
+@app.route('/power/<power>')
+def set_main_power(power: float):
+    return Response(status=200)
 
 
 if __name__ == '__main__':

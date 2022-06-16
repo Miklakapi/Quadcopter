@@ -5,9 +5,8 @@ $(document).ready(function () {
 }).on('change', '.slider', function () {
 	let val = $(this).val();
 	$('.power').html(val + ' %');
-	$.get('http://192.168.1.185:5000/power/' + (5 + (5 * val / 100)));
+	$.get('http://192.168.1.185:5000/power/' + (5 + (5 * val / 100)).toFixed(2));
 });
-;
 
 function initPower() {
     fetch('http://192.168.1.185:5000/get-data')
