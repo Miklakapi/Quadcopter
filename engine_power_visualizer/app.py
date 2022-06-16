@@ -45,11 +45,12 @@ def get_data():
 
 @app.route('/power/<power>')
 def set_main_power(power: float):
+    # drone.set_main_power(float(power))  ### queue ###
     return Response(status=200)
 
 
 if __name__ == '__main__':
-    proccess = multiprocessing.Process(target=run_quadcopter, args=(data,))
+    proccess = multiprocessing.Process(target=run_quadcopter, args=(data,)) # add queue
     # logging.getLogger('werkzeug').disabled = True
     try:
         proccess.start()

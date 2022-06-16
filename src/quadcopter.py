@@ -131,9 +131,6 @@ class Quadcopter:
             raise Exception('Wrong power')
         self.main_power = main_power
 
-        for x in self.motor_dict.values():
-            x['gpio'].ChangeDutyCycle(main_power + x['extra_power'])
-
     def set_powers(self) -> None:
         """
         This method sets the power on each individual motor.
@@ -309,6 +306,7 @@ class Quadcopter:
         :return: dict | Dictionary of motors power
         """
         powers = {}
+        print(self.main_power)
         for loop_index, x in enumerate(self.motor_dict.values()):
             powers.update({
                 loop_index: self.main_power + x['extra_power']
