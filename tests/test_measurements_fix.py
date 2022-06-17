@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 import import_from_root
-from src.measurements_fix import MeasurementsFixer
+from src.accelerometer import MeasurementsFixer
 
 
 class TestMeasurementsFixer(TestCase):

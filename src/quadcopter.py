@@ -6,8 +6,7 @@ from enum import Enum
 from multiprocessing import Process
 
 from file_reader import FileReader
-from accelerometer import Accelerometer
-from measurements_fix import MeasurementsFixer
+from accelerometer import Accelerometer, MeasurementsFixer
 from timers import Clock
 
 #       ┌────┐y +┌────┐
