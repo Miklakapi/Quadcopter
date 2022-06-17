@@ -3,6 +3,7 @@
 import RPi.GPIO as GPIO
 from time import sleep
 from enum import Enum
+from multiprocessing import Process
 
 from file_reader import FileReader
 from accelerometer import Accelerometer
@@ -67,6 +68,9 @@ class Quadcopter:
     y_delta_power: float = 0
     """The difference in engine power on the y axis"""
 
+    rotation_delta: float = 0
+    """The difference in the power of the motors located on different diagonals"""
+
     CONST_POWER_JUMP: float = 0.08
     """The value of the engine power jump if the flight is unstable"""
 
@@ -79,10 +83,32 @@ class Quadcopter:
     CONST_MIN_POWER: float = 5.0
     """Min motor power"""
 
-    def __init__(self) -> None:
+    CONST_ROTATION_DELTA: float = 0.5
+    """Constant difference in engine power located on different diagonals"""
+
+    queue = None
+    """Variable for receiving data from outside the process"""
+
+    data_list = None
+    """Variable for sending data outside of the process"""
+
+    proccess: Process = None
+    """The variable responsible for handling multiprocessing"""
+
+    ############
+    ### INIT ###
+    ############
+    def __init__(self, queue, data_list) -> None:
         """
         This constructor reads the settings from the file and starts the quadcopter.
+
+        :param queue: multiprocessing.Manager().Queue() | Variable for receiving data from outside the process
+        :param data_list: multiprocessing.Manager().list() | Variable for sending data outside of the process
+        :return: None
         """
+        self.queue = queue
+        self.data_list = data_list
+
         reader = FileReader('motors', '../data/motor_pins.json')
         reader.add_file('leds', '../data/led_pins.json')
 
@@ -120,49 +146,95 @@ class Quadcopter:
         self.start_pwm()
         self.start_leds()
 
-    def set_main_power(self, main_power: float) -> None:
+    def start_pwm(self) -> None:
         """
-        This method determines the main power of the quadcopter.
-
-        :param main_power: float | Power
-        :return: None
-        """
-        if main_power < 0 or main_power > 10:
-            raise Exception('Wrong power')
-        self.main_power = main_power
-
-    def set_powers(self) -> None:
-        """
-        This method sets the power on each individual motor.
+        This method turns on and tests the motors and LEDs.
 
         :return: None
         """
         for x in self.motor_dict.values():
-            x['gpio'].ChangeDutyCycle(self.main_power + x['extra_power'])
+            x['gpio'].start(4)
 
-    def set_action(self, action: Action) -> None:
+        sleep(5)
+        for x in self.motor_dict:
+            self.motor_dict[x]['gpio'].ChangeDutyCycle(5.7)
+            self.set_led(self.led_dict[x], True)
+            sleep(2)
+            self.motor_dict[x]['gpio'].ChangeDutyCycle(5)
+            self.set_led(self.led_dict[x], False)
+        self.main_power = 5
+
+    def start_leds(self) -> None:
         """
-        This method sets the activity of the quadcopter and changes the range of angles.
-        
-        :param action: Action | Drone action
+        This method informs you that the drone is ready by means of LEDs. It also sets the appropriate state of the LEDs and resets the clock.
+
         :return: None
         """
-        x_angle_range = [-1, 1]
-        y_angle_range = [-1, 1]
-        if action == self.Action.FORWARD:
-            x_angle_range = [18, 22]
-        elif action == self.Action.BACKWARD:
-            x_angle_range = [-22, -18]
-        elif action == self.Action.LEFT:
-            y_angle_range = [-22, -18]
-        elif action == self.Action.RIGHT:
-            y_angle_range = [18, 22]
+        for x in range(3):
+            for x in self.led_dict.values():
+                self.set_led(x, True)
+            sleep(0.3)
+            for x in self.led_dict.values():
+                self.set_led(x, False)
 
-        self.action = action
-        self.x_angle_range = x_angle_range
-        self.y_angle_range = y_angle_range
+        self.set_led(self.led_dict['frontLeft'], True)
+        self.set_led(self.led_dict['backRight'], True)
 
-    def run(self) -> None:
+    #################
+    ### PROCESSES ###
+    #################
+    def start(self, test: bool = False) -> None:
+        """
+        This method is used to select whether the drone is to be launched in a test environment or a normal environment.
+
+        :param test: bool | Type of runtime
+        :return: None
+        """
+        if test:
+            self.proccess = Process(target=self.run_test, args=(self.queue, self.data_list))
+        else:
+            self.proccess = Process(target=self.run, args=(self.queue,))
+        self.proccess.start()
+
+    def run(self, queue) -> None:
+        """
+        This method TODO
+
+        :param queue: multiprocessing.Manager().Queue() | Variable for receiving data from outside the process
+        :return: None
+        """
+        # TODO
+        try:
+            while True:
+                if not queue.empty():
+                    self.set_main_power(queue.get())
+                self.main_method()
+                sleep(0.1)
+        except KeyboardInterrupt:
+            return
+    
+    def run_test(self, queue, data_list) -> None:
+        """
+        This method is responsible for the new test process.
+
+        :param queue: multiprocessing.Manager().Queue() | Variable for receiving data from outside the process
+        :param data_list: multiprocessing.Manager().list() | Variable for sending data outside of the process
+        :return: None
+        """
+        try:
+            while True:
+                if not queue.empty():
+                    self.set_main_power(queue.get())
+                self.main_method()
+                data_list[0] = self.get_powers()
+                sleep(0.1)
+        except KeyboardInterrupt:
+            return
+
+    #############
+    ### HEART ###
+    #############
+    def main_method(self) -> None:
         """
         This method manages the quadcopter using data from the accelerometer.
 
@@ -195,6 +267,50 @@ class Quadcopter:
         self.distribute_power()
         self.set_powers()
 
+    ###############
+    ### CONTROL ###
+    ###############
+    def set_main_power(self, main_power: float) -> None:
+        """
+        This method determines the main power of the quadcopter.
+
+        :param main_power: float | Power
+        :return: None
+        """
+        if main_power < 0 or main_power > 10:
+            raise Exception('Wrong power')
+        self.main_power = main_power
+
+    def set_action(self, action: Action) -> None:
+        """
+        This method sets the activity of the quadcopter and changes the range of angles.
+        
+        :param action: Action | Drone action
+        :return: None
+        """
+        x_angle_range = [-1, 1]
+        y_angle_range = [-1, 1]
+        self.rotation_delta = 0
+        if action == self.Action.FORWARD:
+            x_angle_range = [18, 22]
+        elif action == self.Action.BACKWARD:
+            x_angle_range = [-22, -18]
+        elif action == self.Action.LEFT:
+            y_angle_range = [-22, -18]
+        elif action == self.Action.RIGHT:
+            y_angle_range = [18, 22]
+        elif action == self.Action.ROTATE_RIGHT:
+            self.rotation_delta = self.CONST_MAX_DELTA
+        elif action == self.Action.ROTATE_LEFT:
+            self.rotation_delta = -self.CONST_MAX_DELTA
+
+        self.action = action
+        self.x_angle_range = x_angle_range
+        self.y_angle_range = y_angle_range
+
+    #############
+    ### SETUP ###
+    #############
     def distribute_power(self) -> None:
         """
         This method distributes power between the motors based on a variable delta.
@@ -204,10 +320,10 @@ class Quadcopter:
         power_per_engine_left = self.x_delta_power / 2
         power_per_engine_right = -power_per_engine_left
 
-        self.motor_dict['frontLeft']['extra_power'] = power_per_engine_left
-        self.motor_dict['backLeft']['extra_power'] = power_per_engine_left
-        self.motor_dict['frontRight']['extra_power'] = power_per_engine_right
-        self.motor_dict['backRight']['extra_power'] = power_per_engine_right
+        self.motor_dict['frontLeft']['extra_power'] = power_per_engine_left - self.rotation_delta
+        self.motor_dict['backLeft']['extra_power'] = power_per_engine_left + self.rotation_delta
+        self.motor_dict['frontRight']['extra_power'] = power_per_engine_right + self.rotation_delta
+        self.motor_dict['backRight']['extra_power'] = power_per_engine_right - self.rotation_delta
 
         power_per_engine_front = self.y_delta_power / 2
         power_per_engine_back = -power_per_engine_front
@@ -235,47 +351,14 @@ class Quadcopter:
             for motor in self.motor_dict.values():
                 motor['extra_power'] += extra_power
 
-    def get_calculated_power(self, motor_name) -> float:
+    def set_powers(self) -> None:
         """
-        This method calculates the motor power and returns it.
-        
-        :return: float | Calculated_power
-        """
-        return self.main_power + self.motor_dict[motor_name]['extra_power']
-
-    def start_pwm(self) -> None:
-        """
-        This method turns on and tests the motors and LEDs.
+        This method sets the power on each individual motor.
 
         :return: None
         """
         for x in self.motor_dict.values():
-            x['gpio'].start(4)
-
-        sleep(5)
-        for x in self.motor_dict:
-            self.motor_dict[x]['gpio'].ChangeDutyCycle(5.7)
-            self.set_led(self.led_dict[x], True)
-            sleep(2)
-            self.motor_dict[x]['gpio'].ChangeDutyCycle(5)
-            self.set_led(self.led_dict[x], False)
-        self.main_power = 5
-    
-    def start_leds(self) -> None:
-        """
-        This method informs you that the drone is ready by means of LEDs. It also sets the appropriate state of the LEDs and resets the clock.
-
-        :return: None
-        """
-        for x in range(3):
-            for x in self.led_dict.values():
-                self.set_led(x, True)
-            sleep(0.3)
-            for x in self.led_dict.values():
-                self.set_led(x, False)
-
-        self.set_led(self.led_dict['frontLeft'], True)
-        self.set_led(self.led_dict['backRight'], True)
+            x['gpio'].ChangeDutyCycle(self.main_power + x['extra_power'])
 
     def set_led(self, led: dict, active: bool) -> None:
         """
@@ -299,6 +382,18 @@ class Quadcopter:
         GPIO.setup(led['pin'], led['active'])
         return led['active']
 
+    ###################
+    ### CALCULTIONS ###
+    ###################
+    def get_calculated_power(self, motor_name: str) -> float:
+        """
+        This method calculates the motor power and returns it.
+        
+        :param motor_name: str | Motor name
+        :return: float | Calculated_power
+        """
+        return self.main_power + self.motor_dict[motor_name]['extra_power']
+
     def get_powers(self) -> dict:
         """
         This method returns the power of the motors to generate a visualization for testing purposes.
@@ -306,12 +401,30 @@ class Quadcopter:
         :return: dict | Dictionary of motors power
         """
         powers = {}
-        print(self.main_power)
         for loop_index, x in enumerate(self.motor_dict.values()):
             powers.update({
                 loop_index: self.main_power + x['extra_power']
             })
         return powers
+
+    ###########
+    ### DEL ###
+    ###########
+    def join(self) -> None:
+        """
+        This method joins the process.
+        
+        :return: None
+        """
+        self.proccess.join()
+
+    def terminate(self) -> None:
+        """
+        This method terminates the process.
+
+        :return: None
+        """
+        self.proccess.terminate()
 
     def __del__(self) -> None:
         """
