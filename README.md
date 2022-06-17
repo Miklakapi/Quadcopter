@@ -41,8 +41,5 @@ The project is in the development phase.
 
 
 ## TODO
-* Dron main function
-* Power control for stability
-* Power regulation for turning
 * Control interface (server side)
 * README
