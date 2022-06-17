@@ -1,31 +1,29 @@
 """This module manages the web visualizer."""
 
 import os
-import logging
-from time import sleep
-from flask import Flask, send_from_directory, render_template, Response
-import multiprocessing
+from flask import Flask, send_from_directory, render_template
+from flask_socketio import SocketIO
 from flask_cors import CORS
-
-import import_from_root
-from src.quadcopter import Quadcopter
+import multiprocessing
 
 
-data = multiprocessing.Manager().list()
-data.append(0)
+try:
+    import import_from_root
+    from src.quadcopter import Quadcopter
+
+    powers = multiprocessing.Manager().list()
+    powers.append(0)
+
+    drone = Quadcopter(multiprocessing.Manager().Queue(), powers)
+    drone.start(test=True)
+except Exception as error:
+    print(error)
+
+
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'secret'
 CORS(app)
-drone = Quadcopter()
-
-
-def run_quadcopter(variable):
-    try:
-        while True:
-            drone.run()
-            variable[0] = drone.get_powers()
-            sleep(0.1)
-    except KeyboardInterrupt:
-        return
+socketio = SocketIO(app)
 
 
 @app.route('/favicon.ico')
@@ -40,21 +38,18 @@ def index():
 
 @app.route('/get-data')
 def get_data():
-    return data[0]
+    return drone.data_list[0]
 
 
-@app.route('/power/<power>')
-def set_main_power(power: float):
-    # drone.set_main_power(float(power))  ### queue ###
-    return Response(status=200)
+@socketio.on('message')
+def handleMessage(power):
+    print('Main power: ' + str(power))
+    drone.queue.put(float(power))
 
 
 if __name__ == '__main__':
-    proccess = multiprocessing.Process(target=run_quadcopter, args=(data,)) # add queue
-    # logging.getLogger('werkzeug').disabled = True
     try:
-        proccess.start()
-        app.run('0.0.0.0', debug=True)
+        socketio.run(app, host='0.0.0.0', debug=True, use_reloader=False)
     except KeyboardInterrupt:
-        proccess.terminate()
-        proccess.join()
+        drone.terminate()
+        drone.join()
